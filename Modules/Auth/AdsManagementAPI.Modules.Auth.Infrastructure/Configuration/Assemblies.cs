@@ -1,6 +1,9 @@
-﻿namespace AdsManagementAPI.Modules.Auth.Infrastructure.Configuration;
+﻿using System.Reflection;
+using AdsManagementAPI.Modules.Auth.Application.Contracts;
 
-public class Assemblies
+namespace AdsManagementAPI.Modules.Auth.Infrastructure.Configuration;
+
+internal static class Assemblies
 {
-    
+    public static readonly Assembly Application = typeof(IAuthModule).Assembly;
 }

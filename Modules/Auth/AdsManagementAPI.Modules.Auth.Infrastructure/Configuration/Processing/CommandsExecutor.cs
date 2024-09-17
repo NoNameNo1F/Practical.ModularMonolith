@@ -4,7 +4,7 @@ using MediatR;
 
 namespace AdsManagementAPI.Modules.Auth.Infrastructure.Configuration.Processing;
 
-internal class CommandsExecute
+internal class CommandsExecutor
 {
     internal static async Task Execute(ICommand command)
     {

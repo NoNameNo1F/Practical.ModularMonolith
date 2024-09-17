@@ -1,4 +1,6 @@
 ﻿using AdsManagementAPI.Modules.Auth.Application.Contracts;
+using AdsManagementAPI.Modules.Auth.Infrastructure.Configuration;
+using AdsManagementAPI.Modules.Auth.Infrastructure.Configuration.Processing;
 using MediatR;
 using Autofac;
 
@@ -10,13 +12,18 @@ public class AuthModule : IAuthModule
         return await CommandsExecutor.Execute(command);
     }
 
-    public Task ExecuteCommandAsync(ICommand command)
+    public async Task ExecuteCommandAsync(ICommand command)
     {
-        throw new NotImplementedException();
+        await CommandsExecutor.Execute(command);
     }
 
-    public Task<TResult> ExecuteQueryAsync<TResult>(IQuery<TResult> query)
+    public async Task<TResult> ExecuteQueryAsync<TResult>(IQuery<TResult> query)
     {
-        throw new NotImplementedException();
+        using (var scope = CompositionRoot.BeginLifetimeScope())
+        {
+            var mediator = scope.Resolve<IMediator>();
+
+            return await mediator.Send(query);
+        }
     }
 }
