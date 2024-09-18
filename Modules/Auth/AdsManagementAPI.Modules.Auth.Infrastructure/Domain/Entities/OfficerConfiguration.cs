@@ -8,7 +8,7 @@ public class OfficerConfiguration : IEntityTypeConfiguration<Officer>
 {
     public void Configure(EntityTypeBuilder<Officer> builder)
     {
-        builder.ToTable("Officers");
+        builder.ToTable("Officer");
         builder.HasKey(o => o.OfficerId);
 
         builder.Property<Guid>("OfficerId").HasColumnName("OfficerId");
@@ -18,6 +18,16 @@ public class OfficerConfiguration : IEntityTypeConfiguration<Officer>
         builder.Property<string>("PhoneNumber").HasColumnName("PhoneNumber");
         builder.Property<string>("PasswordHash").HasColumnName("PasswordHash");
         builder.Property<int>("WardId").HasColumnName("WardId");
-        // builder.Property<Guid>("RoleId").HasColumnName("RoleId");
+        builder.Property<Guid>("RoleId").HasColumnName("RoleId");
+
+        builder
+            .HasOne<Role>()
+            .WithOne(r => r.Officer)
+            .HasForeignKey<Officer>(o => o.RoleId);
+
+        builder
+            .HasMany<Privilege>(r => r.Privileges)
+            .WithMany(p => p.Officers)
+            .UsingEntity("OfficerPrivilege");
     }
 }

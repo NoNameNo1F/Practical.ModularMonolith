@@ -1,7 +1,7 @@
 ﻿using AdsManagementAPI.BuildingBlocks.Domain.BusinessRules;
 using AdsManagementAPI.BuildingBlocks.Domain.DomainEvents;
 
-namespace AdsManagementAPI.BuildingBlocks.Domain;
+namespace AdsManagementAPI.BuildingBlocks.Domain.DomainEntities;
 
 public abstract class Entity
 {

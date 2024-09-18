@@ -16,8 +16,8 @@ internal class ValidatorCommandHandlerDecorator<T> : ICommandHandler<T>
         IList<IValidator<T>> validators,
         ICommandHandler<T> command)
     {
-        _validators = validators;
-        _command = command;
+        this._validators = validators;
+        this._command = command;
     }
     
     public async Task Handle(T command, CancellationToken cancellationToken)

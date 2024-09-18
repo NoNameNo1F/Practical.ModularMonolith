@@ -1,8 +1,9 @@
 
 
 using AdsManagementAPI.API.Common;
-using AdsManagementAPI.API.Configuration.Extensions;
+using AdsManagementAPI.API.Configurations.Extensions;
 using AdsManagementAPI.Modules.Auth.Infrastructure.Configuration.Auth;
+using AdsManagementAPI.Modules.Auth.Infrastructure.Token;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Serilog;
@@ -22,8 +23,10 @@ builder.Services.AddProblemDetails();
 
 
 // Extensions
-builder.Services.AddSwaggerDocumentation();
+builder.Services.AddApiSwaggerDocumentation();
 builder.Services.AddApiVersions();
+builder.Services.AddApiAuthentication(builder.Configuration);
+builder.Services.AddApiAuthorization();
 
 //Registering Module
 builder.Host
@@ -37,6 +40,12 @@ builder.Host
                 "[{Timestamp:HH:mm:ss} {Level:u3}] [{Module}] [{Context}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
 
+        var tokensConfiguration = new TokensConfiguration(
+            builder.Configuration["Jwt:Issuer"],
+            builder.Configuration["Jwt:Audience"],
+            builder.Configuration["Jwt:Key"]
+        );
+        
         // Register module here
         container.RegisterModule(new AuthAutoFacModule());
 
@@ -44,8 +53,9 @@ builder.Host
 
         AdsManagementAPI.Modules.Auth.Infrastructure.Configuration.Startup.Initialize(
             builder.Configuration.GetConnectionString(
-                "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=AuthModuleDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;"),
-            logger
+                builder.Configuration["Databases:AuthModuleDb:Sql:ConnectionString"]),
+            logger,
+            tokensConfiguration
         );
     });
 var app = builder.Build();

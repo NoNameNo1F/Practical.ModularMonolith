@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
-namespace AdsManagementAPI.API.Configuration.Extensions;
+namespace AdsManagementAPI.API.Configurations.Extensions;
 
 internal static class SwaggerExtensions
 {
-    internal static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
+    internal static IServiceCollection AddApiSwaggerDocumentation(this IServiceCollection services)
     {
         services.AddSwaggerGen(options =>
         {
@@ -53,13 +54,19 @@ internal static class SwaggerExtensions
         return services;
     }
 
-    internal static IApplicationBuilder UseSwaggerDocumentation(this IApplicationBuilder app)
+    internal static WebApplication UseSwaggerDocumentation(this WebApplication app)
     {
         app.UseSwagger();
 
-        app.UseSwaggerUI(cfg =>
+        var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
+        app.UseSwaggerUI(options =>
         {
-            cfg.SwaggerEndpoint("/swagger/v1/swagger.json", "AdsManagement API");
+            foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+            {
+                options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                    description.GroupName.ToUpperInvariant());
+            }
         });
 
         return app;
