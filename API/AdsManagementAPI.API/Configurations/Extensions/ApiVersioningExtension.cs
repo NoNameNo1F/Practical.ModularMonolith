@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
 
-namespace AdsManagementAPI.API.Configuration.Extensions;
+namespace AdsManagementAPI.API.Configurations.Extensions;
 
 internal static class ApiVersioningExtension
 {
@@ -15,6 +15,10 @@ internal static class ApiVersioningExtension
                 new UrlSegmentApiVersionReader(),
                 new HeaderApiVersionReader("x-api-version"),
                 new MediaTypeApiVersionReader("x-api-version"));
+        }).AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
         });
 
         return services;
